@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="remove.dg - Remove background from images instantly using AI." />
+  <meta name="keywords" content="background remover, remove.bg alternative, remove.dg, AI photo edit" />
+  <meta name="author" content="remove.dg team" />
+  <title>remove.dg - AI Background Remover</title>
+
+  <!-- Favicon -->
+  <link rel="icon" href="https://www.svgrepo.com/show/491521/image-remove.svg" type="image/svg+xml">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --gradient: linear-gradient(135deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888);
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Inter', sans-serif;
+    }
+
+    body {
+      background: #111;
+      color: white;
+      text-align: center;
+      padding: 2rem;
+    }
+
+    h1 {
+      font-size: 2.5rem;
+      background: var(--gradient);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 1rem;
+      animation: fadeIn 1s ease-out;
+    }
+
+    p {
+      color: #ccc;
+      margin-bottom: 2rem;
+    }
+
+    .upload-box {
+      border: 2px dashed #666;
+      border-radius: 15px;
+      padding: 2rem;
+      background: rgba(255, 255, 255, 0.05);
+      transition: 0.3s;
+    }
+
+    .upload-box:hover {
+      border-color: #fff;
+    }
+
+    input[type="file"] {
+      margin: 1rem 0;
+    }
+
+    button {
+      padding: 0.75rem 2rem;
+      border: none;
+      border-radius: 30px;
+      font-size: 1rem;
+      font-weight: 600;
+      color: white;
+      background: var(--gradient);
+      cursor: pointer;
+      transition: transform 0.2s ease;
+    }
+
+    button:hover {
+      transform: scale(1.05);
+      box-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
+    }
+
+    #preview {
+      margin-top: 2rem;
+      max-width: 100%;
+      border-radius: 15px;
+      box-shadow: 0 0 20px rgba(255, 255, 255, 0.1);
+    }
+
+    .ad-banner {
+      margin: 2rem auto;
+      padding: 1rem;
+      max-width: 728px;
+      background: rgba(255, 255, 255, 0.08);
+      border-radius: 10px;
+    }
+
+    .social-bar {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      padding: 0.5rem;
+      background: rgba(0, 0, 0, 0.8);
+      color: #fff;
+      font-size: 0.9rem;
+      z-index: 999;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(-20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @media (max-width: 600px) {
+      h1 { font-size: 2rem; }
+      button { width: 100%; }
+    }
+  </style>
+</head>
+
+<body>
+  <h1>remove.dg</h1>
+  <p>Remove image backgrounds instantly using AI. 100% free with remove.bg API.</p>
+
+  <!-- Native Banner Ad Section -->
+  <div class="ad-banner">
+    <!-- Native Ad Script -->
+    <script async="async" data-cfasync="false" src="//insomniacompulsive.com/93f06781258c958a1348d4ea78f83da5/invoke.js"></script>
+    <div id="container-93f06781258c958a1348d4ea78f83da5"></div>
+  </div>
+
+  <div class="upload-box">
+    <input type="file" id="imageInput" accept="image/*" />
+    <br />
+    <button onclick="removeBackground()">Remove Background</button>
+    <div id="loading" style="margin-top: 1rem; display: none;">Processing...</div>
+  </div>
+
+  <img id="preview" src="" alt="" />
+
+  <!-- Social Bar Ad Section -->
+  <div class="social-bar">
+    <script type='text/javascript' src='//insomniacompulsive.com/85/50/84/855084489f868eefe776a1708e49c4e2.js'></script>
+  </div>
+
+  <script>
+    async function removeBackground() {
+      const fileInput = document.getElementById("imageInput");
+      const preview = document.getElementById("preview");
+      const loading = document.getElementById("loading");
+
+      if (!fileInput.files[0]) {
+        alert("Please upload an image.");
+        return;
+      }
+
+      loading.style.display = "block";
+      preview.src = "";
+
+      const formData = new FormData();
+      formData.append("image_file", fileInput.files[0]);
+      formData.append("size", "auto");
+
+      try {
+        const response = await fetch("https://api.remove.bg/v1.0/removebg", {
+          method: "POST",
+          headers: {
+            "X-Api-Key": "YOUR_API_KEY_HERE"  // Replace with your remove.bg API key
+          },
+          body: formData
+        });
+
+        if (!response.ok) throw new Error("Background removal failed.");
+
+        const blob = await response.blob();
+        const imageUrl = URL.createObjectURL(blob);
+        preview.src = imageUrl;
+
+        const downloadLink = document.createElement("a");
+        downloadLink.href = imageUrl;
+        downloadLink.download = "no-bg.png";
+        downloadLink.innerText = "Download Image";
+        downloadLink.style.display = "inline-block";
+        downloadLink.style.marginTop = "1rem";
+        downloadLink.style.color = "#fff";
+        downloadLink.style.textDecoration = "underline";
+        document.body.appendChild(downloadLink);
+
+      } catch (error) {
+        alert("Error: " + error.message);
+      } finally {
+        loading.style.display = "none";
+      }
+    }
+  </script>
+</body>
+</html>
